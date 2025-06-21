@@ -448,8 +448,9 @@ function addDay() {
   }
 
   let buttonHTML = `
-    <button type="button" onclick="addActivity(this)">+ Add Activity</button>
-  `;
+  <button type="button" onclick="addActivity(this)" style="background: orange; color: white;">+ Add Activity</button>
+`;
+
 
   if (dayCount < totalDays) {
     buttonHTML += `
