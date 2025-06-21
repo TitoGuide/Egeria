@@ -720,6 +720,21 @@ document.addEventListener("DOMContentLoaded", () => {
 // END DOMCONTENTLOADED LISTENER AND MODAL LOGIC //
 ///////////////////////////////////////////
 
+document.getElementById("shareButton").addEventListener("click", () => {
+  const text = document.getElementById("output").textContent;
+
+  if (navigator.share) {
+    navigator.share({
+      title: 'Itinerary',
+      text: text
+    }).catch((err) => {
+      alert("Sharing failed: " + err.message);
+    });
+  } else {
+    alert("Sharing not supported on this device.");
+  }
+});
+
 </script>
 
 <div id="modal">
@@ -742,20 +757,7 @@ document.addEventListener("DOMContentLoaded", () => {
   </div>
 </div>
 
-document.getElementById("shareButton").addEventListener("click", () => {
-  const text = document.getElementById("output").textContent;
 
-  if (navigator.share) {
-    navigator.share({
-      title: 'Itinerary',
-      text: text
-    }).catch((err) => {
-      alert("Sharing failed: " + err.message);
-    });
-  } else {
-    alert("Sharing not supported on this device.");
-  }
-});
 
 <script>
   if ('serviceWorker' in navigator) {
