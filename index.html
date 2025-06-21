@@ -11,7 +11,28 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="apple-touch-icon" href="icon-192.png">
   <style>
-    /* Beautified layout improvements */
+    :root {
+      --bg-color: #f0f4f5;
+      --text-color: #333;
+      --card-bg: #ffffff;
+      --input-bg: #ffffff;
+      --accent-color: #007aff;
+      --secondary-bg: #e9ecef;
+      --modal-bg: white;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #1d1f21;
+        --text-color: #eee;
+        --card-bg: #2c2f33;
+        --input-bg: #2a2d30;
+        --accent-color: #4dabf7;
+        --secondary-bg: #3a3d40;
+        --modal-bg: #2b2b2b;
+      }
+    }
+
     *, *::before, *::after {
       box-sizing: border-box;
     }
@@ -20,13 +41,13 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       margin: 0;
       padding: 1.5em;
-      background: #f0f4f5;
-      color: #333;
+      background: var(--bg-color);
+      color: var(--text-color);
     }
 
     h1 {
       text-align: center;
-      color: #005b63;
+      color: var(--accent-color);
       margin-bottom: 1em;
     }
 
@@ -43,6 +64,8 @@
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 1em;
+      background: var(--input-bg);
+      color: var(--text-color);
     }
 
     .date-group {
@@ -62,13 +85,13 @@
       padding: 0.5em;
       border: 1px solid #ccc;
       border-radius: 6px;
-      background: #e9ecef;
+      background: var(--secondary-bg);
       text-align: center;
       font-weight: bold;
     }
 
     .day {
-      background: #ffffff;
+      background: var(--card-bg);
       border: 1px solid #ccc;
       border-radius: 8px;
       padding: 1em;
@@ -92,7 +115,7 @@
       border: none;
       border-radius: 6px;
       color: white;
-      background-color: #007aff;
+      background-color: var(--accent-color);
       cursor: pointer;
     }
 
@@ -102,13 +125,14 @@
 
     #output {
       white-space: pre-wrap;
-      background: #ffffff;
+      background: var(--card-bg);
       border: 1px solid #ccc;
       padding: 1em;
       margin-top: 2em;
       border-radius: 8px;
       font-family: monospace;
       font-size: 1em;
+      color: var(--text-color);
     }
 
     .error-box {
@@ -122,7 +146,6 @@
       margin-top: 1em;
     }
 
-    /* Modal styling */
     #modal {
       position: fixed;
       inset: 0;
@@ -134,7 +157,7 @@
     }
 
     #modalContent {
-      background: white;
+      background: var(--modal-bg);
       padding: 2em 1em 1em;
       border-radius: 8px;
       width: 90%;
@@ -147,8 +170,8 @@
     #modalTitle {
       font-size: 1.2em;
       font-weight: bold;
-      background: #f5f5f5;
-      color: #333;
+      background: var(--secondary-bg);
+      color: var(--text-color);
       border: none;
       padding: 0.8em;
       width: 100%;
@@ -160,7 +183,7 @@
     #modalItems span {
       display: inline-block;
       background: #e0f7fa;
-      color: #007aff;
+      color: var(--accent-color);
       padding: 0.5em 0.75em;
       margin: 0.25em;
       border-radius: 6px;
@@ -169,7 +192,7 @@
     }
 
     #modalItems span.selected {
-      background: #007aff;
+      background: var(--accent-color);
       color: white;
       font-weight: bold;
     }
@@ -188,59 +211,3 @@
     }
   </style>
 </head>
-
-<body>
-  <h1>Itinerary Builder</h1>
-
-  <label for="tourName">Tour Name:</label>
-  <input id="tourName" type="text" placeholder="e.g. Bible Tours">
-
-  <div class="date-group">
-    <div class="date-wrapper">
-      <label for="startDate">Start Date:</label>
-      <input id="startDate" type="date" onchange="updateDayCount()">
-    </div>
-    <div class="date-wrapper">
-      <label for="endDate">End Date:</label>
-      <input id="endDate" type="date" onchange="updateDayCount()">
-    </div>
-    <div class="date-wrapper">
-      <label>Days:</label>
-      <div id="dayCount" class="readonly-field">—</div>
-    </div>
-  </div>
-
-  <div id="daysContainer"></div>
-
-  <pre id="output">
-✨ How to Use the Itinerary Builder
-
-1. Enter the tour name.
-2. Select a start and end date (1–30 days range).
-- The first day window will open.
-3. Optional: Add a title next to each date.
-4. Tap "+ Add Activity" to choose or type site names.
-- When finished, tap Accept Selection.
-5. Tap "Next Day" to continue.
-6. Tap "Summarize" to preview the final itinerary.
-7. Tap "Share or Save" to export via Notes, WhatsApp, Email, etc.
-
-⚠️ Changing start/end dates will reset all day entries.
-  </pre>
-
-  <div style="text-align: center; margin-top: 2em;">
-    <button id="shareButton" style="display:none; min-width: 200px;">Share or Save Itinerary</button>
-  </div>
-
-  <div id="modal">
-    <div id="modalContent">
-      <button id="modalTitle">Select Activities</button>
-      <div id="modalItems"></div>
-    </div>
-  </div>
-
-  <!-- Your script should go here -->
-  <script src="main.js"></script>
-</body>
-
-</html>
