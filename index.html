@@ -1,246 +1,785 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
   <title>Itinerary Builder</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#66b2ae">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link rel="apple-touch-icon" href="icon-192.png">
+
+<link rel="manifest" href="manifest.json" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- 📱 iOS Home Screen Support -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+
+  <!-- 🎨 Browser Theme -->
+  <meta name="theme-color" content="#66b2ae" />
+
   <style>
-    /* Beautified layout improvements */
+    /* your existing styles remain unchanged */
     *, *::before, *::after {
       box-sizing: border-box;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, sans-serif;
+      padding: 1em;
+      background: #66b2ae;
       margin: 0;
-      padding: 1.5em;
-      background: #f0f4f5;
-      color: #333;
     }
 
-    h1 {
-      text-align: center;
-      color: #005b63;
-      margin-bottom: 1em;
-    }
-
-    label {
-      font-weight: bold;
-      margin-top: 1em;
-      display: block;
-    }
-
-    input[type="text"], input[type="date"], .activity-input {
-      width: 100%;
-      padding: 0.7em;
-      margin-top: 0.3em;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 1em;
-    }
-
-    .date-group {
-      display: flex;
-      gap: 1em;
-      flex-wrap: wrap;
-      margin-top: 1em;
-    }
-
-    .date-wrapper {
-      flex: 1;
-      min-width: 120px;
-    }
-
-    .readonly-field {
-      height: 40px;
-      padding: 0.5em;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      background: #e9ecef;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    .day {
-      background: #ffffff;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 1em;
-      margin-top: 1.5em;
-    }
-
-    .day h3 {
-      margin-top: 0;
-    }
-
-    .day-buttons {
-      display: flex;
-      gap: 1em;
-      margin-top: 1em;
-    }
-
-    .day-buttons button, #shareButton {
-      flex: 1;
-      padding: 0.75em;
-      font-size: 1em;
-      border: none;
-      border-radius: 6px;
-      color: white;
-      background-color: #007aff;
-      cursor: pointer;
-    }
-
-    .day-buttons button:last-child {
-      background-color: #28a745; /* green for Summarize */
-    }
-
-    #output {
-      white-space: pre-wrap;
-      background: #ffffff;
-      border: 1px solid #ccc;
-      padding: 1em;
-      margin-top: 2em;
-      border-radius: 8px;
-      font-family: monospace;
-      font-size: 1em;
-    }
-
-    .error-box {
-      background: #ffe5e5;
-      color: #990000;
-      padding: 1em;
-      border: 1px solid #cc0000;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: bold;
-      margin-top: 1em;
-    }
-
-    /* Modal styling */
-    #modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-
-    #modalContent {
-      background: white;
-      padding: 2em 1em 1em;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 600px;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    }
-
-    #modalTitle {
-      font-size: 1.2em;
-      font-weight: bold;
-      background: #f5f5f5;
-      color: #333;
-      border: none;
-      padding: 0.8em;
-      width: 100%;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-bottom: 1em;
-    }
-
-    #modalItems span {
-      display: inline-block;
-      background: #e0f7fa;
-      color: #007aff;
-      padding: 0.5em 0.75em;
-      margin: 0.25em;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.9em;
-    }
-
-    #modalItems span.selected {
-      background: #007aff;
-      color: white;
-      font-weight: bold;
-    }
-
-    #modalItems h4 {
-      margin: 1em 0 0.5em;
-      font-size: 1em;
-    }
-
-    #modalItems h4.has-items {
-      color: #0051cc;
-    }
-
-    #modalItems h4.no-items {
-      color: #666;
-    }
+    /* ... rest of your CSS exactly as you pasted ... */
   </style>
 </head>
 
+  <style>
+    /* Universal box sizing */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, sans-serif;
+      padding: 1em;
+      background: #66b2ae;
+      margin: 0;
+    }
+
+    input[type="text"],
+    .activity-input {
+      width: 100%;
+      padding: 0.6em;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-top: 0.3em;
+      background: white;
+    }
+
+.date-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 2%;
+  margin-top: 1em;
+  flex-wrap: nowrap;
+}
+
+.date-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.date-wrapper.start,
+.date-wrapper.end {
+  max-width: 33%;
+}
+
+.date-wrapper.days {
+  max-width: 16%;
+}
+
+input[type="date"],
+input[readonly] {
+  width: 100%;
+  height: 40px;
+  padding: 0.5em;
+  font-size: 1em;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: white;
+  box-sizing: border-box;
+}
+
+.readonly-field {
+  height: 40px;
+  padding: 0.5em;
+  font-size: 1em;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #f2f2f2;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+}
+
+    .day {
+      border: 1px solid #ccc;
+      background: #fff;
+      padding: 1em;
+      margin-top: 1.2em;
+      border-radius: 8px;
+    }
+
+.day-buttons {
+  display: flex;
+  gap: 4%;
+  margin-top: 0.6em;
+}
+
+.day-buttons button {
+  display: block;
+  margin-top: 1em;
+  padding: 0.7em;
+  font-size: 1em;
+  background: #007aff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  text-align: center;
+  width: 100%;
+}
+
+.formatted-date {
+  font-size: 1em;
+  padding: 0.5em;
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+    .day h3 {
+      margin: 0 0 0.5em 0;
+      font-size: 1.1em;
+    }
+
+    ul {
+      padding-left: 1.2em;
+      margin: 0.5em 0;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      background: #eee;
+      padding: 1em;
+      border-radius: 8px;
+      margin-top: 1em;
+      font-size: 0.95em;
+    }
+
+.error-box {
+  background: #ffe5e5;
+  border: 1px solid #cc0000;
+  color: #990000;
+  padding: 1em;
+  border-radius: 8px;
+  margin-top: 1em;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Modal styling for site selector */
+
+#modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.modal-header {
+  position: relative;
+  padding-right: 2em;
+}
+
+#modalContent {
+  position: relative;
+  background: white;
+  padding: 2em 1em 1em 1em;
+  border-radius: 8px;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Left-align the title */
+#modalTitle {
+  margin: 0 0 0.8em 0;
+  font-size: 1.2em;
+  text-align: left;
+}
+
+#modalItems {
+  overflow-y: auto;
+  flex: 1;
+}
+
+#modalContent h3 {
+  margin: 0 0 1em;
+  font-size: 1.2em;
+  text-align: left;
+}
+
+#modalContent span {
+  display: inline-block;
+  margin: 0.3em;
+  background: #e0f7fa;
+  padding: 0.4em 0.6em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  cursor: pointer;
+}
+
+#modalContent span.selected {
+  background-color: #0051cc;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 6px;
+  padding: 4px 8px;
+  margin: 3px;
+}
+
+#closeModalBtn {
+  all: unset;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  font-size: 1.8em;
+  background: white;
+  color: #333;
+  padding: 0.2em 0.5em;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 11;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  line-height: 1;
+  text-align: center;
+}
+
+/* Category header styles */
+#modalItems h4 {
+  margin: 1em 0 0.4em;
+  font-size: 1em;
+  user-select: none;
+}
+
+#modalItems h4.has-items {
+  font-weight: bold;
+  color: #0051cc;
+}
+
+#modalItems h4.no-items {
+  font-style: regular;
+  color: #666;
+}
+
+  </style>
+</head>
 <body>
-  <h1>Itinerary Builder</h1>
 
-  <label for="tourName">Tour Name:</label>
-  <input id="tourName" type="text" placeholder="e.g. Bible Tours">
 
-  <div class="date-group">
-    <div class="date-wrapper">
-      <label for="startDate">Start Date:</label>
-      <input id="startDate" type="date" onchange="updateDayCount()">
-    </div>
-    <div class="date-wrapper">
-      <label for="endDate">End Date:</label>
-      <input id="endDate" type="date" onchange="updateDayCount()">
-    </div>
-    <div class="date-wrapper">
-      <label>Days:</label>
-      <div id="dayCount" class="readonly-field">—</div>
-    </div>
+  <label>Tour Name:</label>
+  <input id="tourName" type="text" placeholder="e.g. Bible Tours" />
+
+<div class="date-group">
+  <div class="date-wrapper start">
+    <label for="startDate">Start Date:</label>
+    <input id="startDate" type="date" onchange="updateDayCount()" />
   </div>
+  <div class="date-wrapper end">
+    <label for="endDate">End Date:</label>
+    <input id="endDate" type="date" onchange="updateDayCount()" />
+  </div>
+
+<div class="date-wrapper days">
+
+    <label>Days:</label>
+
+<div id="dayCount" class="readonly-field">—</div>
+
+  </div>
+</div>
 
   <div id="daysContainer"></div>
 
-  <pre id="output">
-✨ How to Use the Itinerary Builder
+<pre id="output" style="white-space: pre-wrap; background: #fefefe; padding: 1em; border: 1px solid #ccc; border-radius: 6px; font-size: 1em; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+">
+✨ <b>How to Use the Itinerary Builder
 
 1. Enter the tour name.
-2. Select a start and end date (1–30 days range).
-- The first day window will open.
-3. Optional: Add a title next to each date.
-4. Tap "+ Add Activity" to choose or type site names.
-- When finished, tap Accept Selection.
-5. Tap "Next Day" to continue.
-6. Tap "Summarize" to preview the final itinerary.
-7. Tap "Share or Save" to export via Notes, WhatsApp, Email, etc.
+2. Select a start and end date (1–30 days range).</b>
+<i>- The first day window will open</i>
+<b>3. Optional: keep or add a title next to the date
+4. Tap "+ Add Activity" to choose or type site names.</b>
+<i>- Selection window will open, when finished tap Accept Selection to return</i>
+<b>5. Tap "Next Day" to continue adding days.</b>
+<i>- Repeat same procedure as Day 1</i>
+<b>6. When done, tap "Summarize" to display final itinerary.</b>
+<i>- It is possible to manually edit or add activities in any day, just press Summarize again to reflect the changes.</i>
+<b>7. Tap "Share or Save Itinerary" to send it to Notes, WhatsApp, email, or other apps.
 
-⚠️ Changing start/end dates will reset all day entries.
-  </pre>
 
-  <div style="text-align: center; margin-top: 2em;">
-    <button id="shareButton" style="display:none; min-width: 200px;">Share or Save Itinerary</button>
+⚠️ Note: Any change to the start or end dates will reset all activities.</b>
+</pre>
+
+<div style="text-align: center; margin-top: 1.5em;">
+  <button id="shareButton" style="
+    padding: 0.9em 1.5em;
+    font-size: 1em;
+    background: #007aff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    display: none;
+    min-width: 60%;
+    max-width: 90%;
+  ">
+    Share or Save Itinerary
+  </button>
+</div>
+
+<button id="shareButton" style="
+  margin-top: 1em;
+  padding: 0.7em 1em;
+  font-size: 1em;
+  background: #007aff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  display: none;
+">
+  Share
+</button>
+
+<script>
+
+let selectionOrder = []; // array of { type: "manual"|"category", label: "..." }
+let manualSelections = {};
+let dayCount = 0;
+let totalDays = 0;
+
+let siteDatabase = {};
+
+fetch('sites.json')
+  .then(response => response.json())
+  .then(data => {
+    siteDatabase = data;
+    // Now you can open modal or initialize your app as usual
+  })
+  .catch(error => {
+    console.error("Failed to load site database:", error);
+    alert("Could not load site database.");
+  });
+
+
+
+//////////////////////////////
+// FUNCTION: generateItinerary //
+//////////////////////////////
+function generateItinerary() {
+  const name = document.getElementById("tourName").value.trim();
+  const start = document.getElementById("startDate").value;
+  const end = document.getElementById("endDate").value;
+
+  const formattedStart = new Date(start).toLocaleDateString();
+  const formattedEnd = new Date(end).toLocaleDateString();
+  let output = `Tour: ${name || "Untitled Tour"}\nDates: ${formattedStart} – ${formattedEnd}\n\n`;
+
+  const days = document.querySelectorAll(".day");
+  days.forEach((day, index) => {
+    const date = day.querySelector(".day-date").value;
+
+    const rawText = day.querySelector(".activity-input").value;
+    const activities = rawText
+      .split("\n")
+      .map(line => line.trim())
+      .filter(line => line)
+      .map(line => "- " + line);
+
+    output += `Day ${index + 1} – ${date}\n${activities.join("\n")}\n\n`;
+
+    document.getElementById("shareButton").style.display = "inline-block";
+  });
+
+  document.getElementById("output").textContent = output.trim();
+}
+//////////////////////////////
+// END FUNCTION: generateItinerary //
+//////////////////////////////
+
+
+//////////////////////////////
+// FUNCTION: addActivity //
+//////////////////////////////
+let currentActivityBox = null;
+let currentTextArea = null;
+
+function addActivity(button) {
+  const container = button.closest(".day");
+  currentActivityBox = container.querySelector(".activity-box");
+  currentTextArea = container.querySelector(".activity-input");
+
+  openModal(currentTextArea.value.trim().split("\n").filter(Boolean));
+}
+//////////////////////////////
+// END FUNCTION: addActivity //
+//////////////////////////////
+
+
+//////////////////////////////
+// FUNCTION: addDay //
+//////////////////////////////
+function addDay() {
+  if (dayCount >= totalDays) return;
+
+  dayCount++;
+  const container = document.getElementById("daysContainer");
+  const div = document.createElement("div");
+  div.className = "day";
+
+  const startInput = document.getElementById("startDate").value;
+  let dateString = "—";
+
+  if (startInput) {
+    const baseDate = new Date(startInput);
+    baseDate.setDate(baseDate.getDate() + (dayCount - 1));
+    const options = { weekday: "long", month: "short", day: "numeric" };
+    dateString = baseDate.toLocaleDateString(undefined, options);
+  }
+
+  let buttonHTML = `
+    <button type="button" onclick="addActivity(this)">+ Add Activity</button>
+  `;
+
+  if (dayCount < totalDays) {
+    buttonHTML += `
+      <button type="button" onclick="addDay()">Next Day</button>
+    `;
+  } else {
+    buttonHTML += `
+      <button type="button" onclick="generateItinerary()" style="background: green">Summarize</button>
+    `;
+  }
+
+  div.innerHTML = `
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8em; gap: 1em;">
+  <h3 style="margin: 0; flex-shrink: 0; white-space: nowrap;">Day ${dayCount}</h3>
+
+<input type="text" class="day-date" value="${dateString}" style="flex-grow: 1; font-size: 1em; padding: 0.45em 0.5em; margin-top: -1px; border-radius: 6px; border: 1px solid #ccc;" />
+
+</div>
+
+<div class="activity-box" style="display: none;">
+  <textarea placeholder="Add activity..." class="activity-input" rows="4" style="width:100%; font-size:1em;"></textarea>
+</div>
+
+  <div class="day-buttons">${buttonHTML}</div>
+  `;
+
+  container.appendChild(div);
+}
+//////////////////////////////
+// END FUNCTION: addDay //
+//////////////////////////////
+
+
+//////////////////////////////
+// FUNCTION: updateDayCount //
+//////////////////////////////
+function updateDayCount() {
+  const startDateInput = document.getElementById("startDate").value;
+  const endDateInput = document.getElementById("endDate").value;
+  const output = document.getElementById("dayCount");
+  const daysContainer = document.getElementById("daysContainer");
+
+  output.style.fontSize = "1em";
+  output.style.color = "#333";
+  output.textContent = "—";
+  daysContainer.innerHTML = "";
+  dayCount = 0;
+  totalDays = 0;
+
+  if (!endDateInput) return;
+
+  if (startDateInput && endDateInput) {
+    const start = new Date(startDateInput);
+    const end = new Date(endDateInput);
+    const diff = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+    if (diff > 0 && diff <= 30) {
+      output.textContent = diff;
+      totalDays = diff;
+      addDay();
+    } else {
+      output.textContent = "❗";
+      output.style.fontSize = "1.4em";
+      output.style.color = "#c00";
+      const errorDiv = document.createElement("div");
+      errorDiv.className = "error-box";
+      errorDiv.textContent = "Please reenter dates correctly (1–30 days allowed)";
+      daysContainer.appendChild(errorDiv);
+    }
+  }
+}
+//////////////////////////////
+// END FUNCTION: updateDayCount //
+//////////////////////////////
+
+
+//////////////////////////////
+// FUNCTION: openModal //
+//////////////////////////////
+
+
+function updateModalTitleState() {
+  const modalTitle = document.getElementById("modalTitle");
+  const hasSelections = selectionOrder.length > 0;
+  modalTitle.textContent = hasSelections ? "Accept Selection" : "Select Activities";
+  modalTitle.style.background = hasSelections ? "#007aff" : "#f5f5f5";
+  modalTitle.style.color = hasSelections ? "white" : "#333";
+}
+
+function openModal(existingSelections = []) {
+  const modal = document.getElementById("modal");
+  const modalItems = document.getElementById("modalItems");
+
+  modalItems.innerHTML = "";
+
+  const sortedCategories = Object.keys(siteDatabase).sort((a, b) =>
+    a.localeCompare(b)
+  );
+
+  sortedCategories.forEach((category) => {
+    const rawItems = siteDatabase[category];
+    const items = rawItems
+      ? rawItems.split(",").map((item) => item.trim()).filter(Boolean).sort((a, b) => a.localeCompare(b))
+      : [];
+
+    const group = document.createElement("div");
+    const label = document.createElement("h4");
+    label.textContent = category;
+    label.style.cursor = "pointer";
+    label.style.marginBottom = "0.3em";
+
+    // Apply visual class
+    label.classList.add(rawItems?.trim() ? "has-items" : "no-items");
+
+    group.appendChild(label);
+
+    if (items.length === 0) {
+      // Manual category - no items
+      label.onclick = () => {
+        if (manualSelections[category]) {
+          delete manualSelections[category];
+          label.style.background = "";
+          selectionOrder = selectionOrder.filter(e => e.label !== category);
+        } else {
+          manualSelections[category] = true;
+          label.style.background = "#d0e0ff";
+          selectionOrder.push({ type: "manual", label: category });
+        }
+        updateModalTitleState(); // <-- call here after toggling
+      };
+
+      group.appendChild(label);
+      modalItems.appendChild(group);
+      return;
+    }
+
+    // Expandable group with items
+    const itemContainer = document.createElement("div");
+    itemContainer.style.display = items.length > 1 ? "none" : "block";
+    itemContainer.style.marginBottom = "1em";
+
+    label.onclick = () => {
+      const isVisible = itemContainer.style.display === "block";
+      itemContainer.style.display = isVisible ? "none" : "block";
+    };
+
+    items.forEach((item) => {
+      const span = document.createElement("span");
+      span.textContent = item;
+
+      if (existingSelections.includes(item)) {
+        span.classList.add("selected");
+      }
+
+      span.onclick = () => {
+        span.classList.toggle("selected");
+
+        if (span.classList.contains("selected")) {
+          selectionOrder.push({ type: "item", category, item });
+        } else {
+          selectionOrder = selectionOrder.filter(e =>
+            !(e.type === "item" && e.category === category && e.item === item)
+          );
+        }
+        updateModalTitleState(); // <-- call here after toggling
+      };
+
+      itemContainer.appendChild(span);
+    });
+
+    group.appendChild(label);
+    group.appendChild(itemContainer);
+    modalItems.appendChild(group);
+  });
+
+  modal.style.display = "flex";
+
+  // Initial update (in case there are pre-existing selections)
+  updateModalTitleState();
+}
+
+
+
+//////////////////////////////
+// END FUNCTION: openModal //
+//////////////////////////////
+
+
+///////////////////////////////////////////
+// DOMCONTENTLOADED LISTENER AND MODAL LOGIC //
+///////////////////////////////////////////
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const modalTitle = document.getElementById("modalTitle");
+
+  function updateModalTitleState() {
+    const hasSelections = selectionOrder.length > 0;
+    modalTitle.textContent = hasSelections ? "Accept Selection" : "Select Activities";
+    modalTitle.style.background = hasSelections ? "#007aff" : "#f5f5f5";
+    modalTitle.style.color = hasSelections ? "white" : "#333";
+  }
+
+  // Watch for class changes in modalItems to detect selection toggles
+  const observer = new MutationObserver(updateModalTitleState);
+  observer.observe(document.getElementById("modalItems"), {
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["class"]
+  });
+
+  // Initial update on load
+  updateModalTitleState();
+
+  // Modal title click = accept selected items
+  modalTitle.onclick = () => {
+    const outputChunks = [];
+    const categoryMap = {};
+
+    selectionOrder.forEach(entry => {
+      if (entry.type === "manual") {
+        outputChunks.push(`${entry.label}`);
+      } else if (entry.type === "item") {
+        const { category, item } = entry;
+        if (category.includes("List of")) {
+          const existing = outputChunks.find(chunk =>
+            !chunk.includes(":") && chunk.endsWith(".")
+          );
+          if (existing) {
+            const index = outputChunks.indexOf(existing);
+            outputChunks[index] = existing.slice(0, -1) + `, ${item}.`;
+          } else {
+            outputChunks.push(`${item}.`);
+          }
+        } else {
+          if (!categoryMap[category]) {
+            categoryMap[category] = [];
+            outputChunks.push({ type: "category", category });
+          }
+          categoryMap[category].push(item);
+        }
+      }
+    });
+
+    outputChunks.forEach((chunk, index) => {
+      if (typeof chunk === "object" && chunk.type === "category") {
+        const cat = chunk.category;
+        const items = categoryMap[cat] || [];
+        outputChunks[index] = `${cat} ${items.join(", ")}.`;
+      }
+    });
+
+    const finalText = currentTextArea.value.trim()
+      ? currentTextArea.value.trim() + "\n" + outputChunks.join("\n")
+      : outputChunks.join("\n");
+
+    currentTextArea.value = finalText;
+    currentActivityBox.style.display = "block";
+    currentTextArea.focus();
+    document.getElementById("modal").style.display = "none";
+
+    // Reset selections
+    selectionOrder = [];
+    manualSelections = {};
+
+    // Reset modal title
+    updateModalTitleState();
+  };
+
+  // 👇 Add these to react to date changes
+  document.getElementById("startDate").addEventListener("change", updateDayCount);
+  document.getElementById("endDate").addEventListener("change", updateDayCount);
+});
+
+
+
+
+///////////////////////////////////////////
+// END DOMCONTENTLOADED LISTENER AND MODAL LOGIC //
+///////////////////////////////////////////
+
+document.getElementById("shareButton").addEventListener("click", () => {
+  const text = document.getElementById("output").textContent;
+
+  if (navigator.share) {
+    navigator.share({
+      title: 'Itinerary',
+      text: text
+    }).catch((err) => {
+      alert("Sharing failed: " + err.message);
+    });
+  } else {
+    alert("Sharing not supported on this device.");
+  }
+});
+
+</script>
+
+<div id="modal">
+  <div id="modalContent">
+
+<button id="modalTitle" style="
+  background: #f5f5f5;
+  color: #333;
+  font-size: 1.2em;
+  font-weight: bold;
+  width: 100%;
+  padding: 0.8em;
+  border: none;
+  text-align: center;
+  border-radius: 6px;
+  cursor: pointer;
+">Select Activities</button>
+
+    <div id="modalItems" style="margin-top: 0.5em;"></div>
   </div>
+</div>
 
-  <div id="modal">
-    <div id="modalContent">
-      <button id="modalTitle">Select Activities</button>
-      <div id="modalItems"></div>
-    </div>
-  </div>
 
-  <!-- Your script should go here -->
-  <script src="main.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('✅ Service Worker registered:', reg.scope))
+        .catch(err => console.error('❌ Service Worker registration failed:', err));
+    });
+  }
+</script>
+
 </body>
-
 </html>
