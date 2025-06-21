@@ -211,3 +211,57 @@
     }
   </style>
 </head>
+<body>
+  <h1>Itinerary Builder</h1>
+
+  <label for="tourName">Tour Name:</label>
+  <input id="tourName" type="text" placeholder="e.g. Bible Tours">
+
+  <div class="date-group">
+    <div class="date-wrapper">
+      <label for="startDate">Start Date:</label>
+      <input id="startDate" type="date" onchange="updateDayCount()">
+    </div>
+    <div class="date-wrapper">
+      <label for="endDate">End Date:</label>
+      <input id="endDate" type="date" onchange="updateDayCount()">
+    </div>
+    <div class="date-wrapper">
+      <label>Days:</label>
+      <div id="dayCount" class="readonly-field">—</div>
+    </div>
+  </div>
+
+  <div id="daysContainer"></div>
+
+  <pre id="output">
+✨ How to Use the Itinerary Builder
+
+1. Enter the tour name.
+2. Select a start and end date (1–30 days range).
+- The first day window will open.
+3. Optional: Add a title next to each date.
+4. Tap "+ Add Activity" to choose or type site names.
+- When finished, tap Accept Selection.
+5. Tap "Next Day" to continue.
+6. Tap "Summarize" to preview the final itinerary.
+7. Tap "Share or Save" to export via Notes, WhatsApp, Email, etc.
+
+⚠️ Changing start/end dates will reset all day entries.
+  </pre>
+
+  <div style="text-align: center; margin-top: 2em;">
+    <button id="shareButton" style="display:none; min-width: 200px;">Share or Save Itinerary</button>
+  </div>
+
+  <div id="modal">
+    <div id="modalContent">
+      <button id="modalTitle">Select Activities</button>
+      <div id="modalItems"></div>
+    </div>
+  </div>
+
+  <!-- Your script should go here -->
+  <script src="main.js"></script>
+</body>
+</html>
