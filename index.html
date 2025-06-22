@@ -676,16 +676,16 @@ document.addEventListener("DOMContentLoaded", () => {
         outputChunks.push(`${entry.label}`);
       } else if (entry.type === "item") {
         const { category, item } = entry;
-        if (category.includes("List of")) {
-          const existing = outputChunks.find(chunk =>
-            !chunk.includes(":") && chunk.endsWith(".")
-          );
-          if (existing) {
-            const index = outputChunks.indexOf(existing);
-            outputChunks[index] = existing.slice(0, -1) + `, ${item}.`;
-          } else {
-            outputChunks.push(`${item}.`);
-          }
+       if (category.includes("List of")) {
+  const existingIndex = outputChunks.findIndex(chunk =>
+    typeof chunk === "string" && !chunk.includes(":") && chunk.endsWith(".")
+  );
+  if (existingIndex !== -1) {
+    outputChunks[existingIndex] = outputChunks[existingIndex].slice(0, -1) + `, ${item}.`;
+  } else {
+    outputChunks.push(`${item}.`);
+  }
+
         } else {
           if (!categoryMap[category]) {
             categoryMap[category] = [];
