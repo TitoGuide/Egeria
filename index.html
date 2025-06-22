@@ -210,12 +210,20 @@ input[readonly] {
   flex-direction: column;
 }
 
-/* Left-align the title */
 #modalTitle {
   margin: 0 0 0.8em 0;
   font-size: 1.2em;
   text-align: left;
+  background: #faffbd;
+  color: #333;
+  font-weight: bold;
+  padding: 0.8em;
+  border: none;
+  width: 100%;
+  border-radius: 6px;
+  cursor: pointer;
 }
+
 
 #modalItems {
   overflow-y: auto;
@@ -760,18 +768,8 @@ document.getElementById("shareButton").addEventListener("click", () => {
 <div id="modal">
   <div id="modalContent">
 
-<button id="modalTitle" style="
-  background: #f5f5f5;
-  color: #333;
-  font-size: 1.2em;
-  font-weight: bold;
-  width: 100%;
-  padding: 0.8em;
-  border: none;
-  text-align: center;
-  border-radius: 6px;
-  cursor: pointer;
-">Select Activities</button>
+<button id="modalTitle">Select Activities</button>
+
 
     <div id="modalItems" style="margin-top: 0.5em;"></div>
   </div>
