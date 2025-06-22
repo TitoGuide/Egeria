@@ -171,6 +171,25 @@ input[readonly] {
   font-weight: bold;
   text-align: center;
 }
+#closeBox {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  background: #c00;
+  color: white;
+  font-size: 1.2em;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 10000;
+  box-shadow: 0 0 4px rgba(0,0,0,0.2);
+}
+
 
 /* Modal styling for site selector */
 
@@ -277,6 +296,7 @@ input[readonly] {
 </head>
 <body>
 
+<div id="closeBox" onclick="closeApp()" title="Close App">×</div>
 
   <label>Tour Name:</label>
   <input id="tourName" type="text" placeholder="e.g. Bible Tours" />
@@ -352,6 +372,14 @@ input[readonly] {
 </button>
 
 <script>
+  function closeApp() {
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    alert("To close the app, swipe up or use the app switcher.");
+  } else {
+    window.close(); // works in desktop browsers only
+  }
+}
+
 
 let selectionOrder = []; // array of { type: "manual"|"category", label: "..." }
 let manualSelections = {};
