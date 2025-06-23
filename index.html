@@ -557,14 +557,6 @@ function updateDayCount() {
 //////////////////////////////
 
 
-function updateModalTitleState() {
-  const modalTitle = document.getElementById("modalTitle");
-  const hasSelections = selectionOrder.length > 0;
-  modalTitle.textContent = hasSelections ? "Accept Selection" : "Select Activities";
-  modalTitle.style.background = hasSelections ? "#007aff" : "#faffbd";
-  modalTitle.style.color = hasSelections ? "white" : "#333";
-}
-
 function openModal(existingSelections = []) {
   const modal = document.getElementById("modal");
   const modalItems = document.getElementById("modalItems");
@@ -586,8 +578,6 @@ function openModal(existingSelections = []) {
     label.textContent = category.trim();
     label.style.cursor = "pointer";
     label.style.marginBottom = "0.3em";
-
-    // Apply visual class
     label.classList.add(rawItems?.trim() ? "has-items" : "no-items");
 
     group.appendChild(label);
@@ -607,96 +597,18 @@ function openModal(existingSelections = []) {
         updateModalTitleState();
       };
 
-      group.appendChild(label);
       modalItems.appendChild(group);
       return;
     }
 
-    // Expandable group with items
+    // Create the container for items
     const itemContainer = document.createElement("div");
-    itemContainer.style.display = items.length > 1 ? "none" : "block";
+    itemContainer.style.display = "none";
     itemContainer.style.marginBottom = "1em";
 
-    // Create "Select All" button (initially hidden)
-    let selectAllBtn;
-    if (items.length > 1) {
-      selectAllBtn = document.createElement("small");
-      selectAllBtn.textContent = "Select All";
-      selectAllBtn.style.marginLeft = "1em";
-      selectAllBtn.style.cursor = "pointer";
-      selectAllBtn.style.color = "#007aff";
-      selectAllBtn.style.fontSize = "0.9em";
-      selectAllBtn.style.display = "none"; // hidden initially
+    // "All" / "None" button (hidden until expanded)
+    let
 
-      let allSelected = false;
-
-      selectAllBtn.onclick = () => {
-        allSelected = !allSelected;
-        const spans = itemContainer.querySelectorAll("span");
-
-        spans.forEach(span => {
-          const item = span.textContent;
-
-          if (allSelected && !span.classList.contains("selected")) {
-            span.classList.add("selected");
-            selectionOrder.push({ type: "item", category, item });
-          } else if (!allSelected && span.classList.contains("selected")) {
-            span.classList.remove("selected");
-            selectionOrder = selectionOrder.filter(
-              e => !(e.type === "item" && e.category === category && e.item === item)
-            );
-          }
-        });
-
-        selectAllBtn.textContent = allSelected ? "Unselect All" : "Select All";
-        updateModalTitleState();
-      };
-
-      label.appendChild(selectAllBtn);
-    }
-
-    // Toggle visibility of items and select all button
-    label.onclick = () => {
-      const isVisible = itemContainer.style.display === "block";
-      itemContainer.style.display = isVisible ? "none" : "block";
-      if (selectAllBtn) {
-        selectAllBtn.style.display = isVisible ? "none" : "inline";
-      }
-    };
-
-    // Create the items
-    items.forEach((item) => {
-      const span = document.createElement("span");
-      span.textContent = item;
-
-      if (existingSelections.includes(item)) {
-        span.classList.add("selected");
-      }
-
-      span.onclick = () => {
-        span.classList.toggle("selected");
-
-        if (span.classList.contains("selected")) {
-          selectionOrder.push({ type: "item", category, item });
-        } else {
-          selectionOrder = selectionOrder.filter(e =>
-            !(e.type === "item" && e.category === category && e.item === item)
-          );
-        }
-        updateModalTitleState();
-      };
-
-      itemContainer.appendChild(span);
-    });
-
-    group.appendChild(label);
-    group.appendChild(itemContainer);
-    modalItems.appendChild(group);
-  });
-
-  modal.style.display = "flex";
-  updateModalTitleState();
-}
 
 
 
