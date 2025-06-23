@@ -574,7 +574,7 @@ function openModal(existingSelections = []) {
 
     const group = document.createElement("div");
     const label = document.createElement("h4");
-    label.textContent = category;
+    label.textContent = category.trim();
     label.style.cursor = "pointer";
     label.style.marginBottom = "0.3em";
 
