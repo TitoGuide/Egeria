@@ -604,7 +604,7 @@ function openModal(existingSelections = []) {
           label.style.background = "#d0e0ff";
           selectionOrder.push({ type: "manual", label: category });
         }
-        updateModalTitleState(); // <-- call here after toggling
+        updateModalTitleState();
       };
 
       group.appendChild(label);
@@ -618,91 +618,53 @@ function openModal(existingSelections = []) {
     itemContainer.style.marginBottom = "1em";
 
     // Create "Select All" button (initially hidden)
-let selectAllBtn;
+    let selectAllBtn;
+    if (items.length > 1) {
+      selectAllBtn = document.createElement("small");
+      selectAllBtn.textContent = "Select All";
+      selectAllBtn.style.marginLeft = "1em";
+      selectAllBtn.style.cursor = "pointer";
+      selectAllBtn.style.color = "#007aff";
+      selectAllBtn.style.fontSize = "0.9em";
+      selectAllBtn.style.display = "none"; // hidden initially
 
-if (items.length > 1) {
-  selectAllBtn = document.createElement("small");
-  selectAllBtn.textContent = "Select All";
-  selectAllBtn.style.marginLeft = "1em";
-  selectAllBtn.style.cursor = "pointer";
-  selectAllBtn.style.color = "#007aff";
-  selectAllBtn.style.fontSize = "0.9em";
-  selectAllBtn.style.display = "none"; // hidden initially
+      let allSelected = false;
 
-  let allSelected = false;
+      selectAllBtn.onclick = () => {
+        allSelected = !allSelected;
+        const spans = itemContainer.querySelectorAll("span");
 
-  selectAllBtn.onclick = () => {
-    allSelected = !allSelected;
-    const spans = itemContainer.querySelectorAll("span");
+        spans.forEach(span => {
+          const item = span.textContent;
 
-    spans.forEach(span => {
-      const item = span.textContent;
+          if (allSelected && !span.classList.contains("selected")) {
+            span.classList.add("selected");
+            selectionOrder.push({ type: "item", category, item });
+          } else if (!allSelected && span.classList.contains("selected")) {
+            span.classList.remove("selected");
+            selectionOrder = selectionOrder.filter(
+              e => !(e.type === "item" && e.category === category && e.item === item)
+            );
+          }
+        });
 
-      if (allSelected && !span.classList.contains("selected")) {
-        span.classList.add("selected");
-        selectionOrder.push({ type: "item", category, item });
-      } else if (!allSelected && span.classList.contains("selected")) {
-        span.classList.remove("selected");
-        selectionOrder = selectionOrder.filter(
-          e => !(e.type === "item" && e.category === category && e.item === item)
-        );
+        selectAllBtn.textContent = allSelected ? "Unselect All" : "Select All";
+        updateModalTitleState();
+      };
+
+      label.appendChild(selectAllBtn);
+    }
+
+    // Toggle visibility of items and select all button
+    label.onclick = () => {
+      const isVisible = itemContainer.style.display === "block";
+      itemContainer.style.display = isVisible ? "none" : "block";
+      if (selectAllBtn) {
+        selectAllBtn.style.display = isVisible ? "none" : "inline";
       }
-    });
+    };
 
-    selectAllBtn.textContent = allSelected ? "Unselect All" : "Select All";
-    updateModalTitleState();
-  };
-
-  label.appendChild(selectAllBtn);
-}
-
-// Toggle visibility on category click
-label.onclick = () => {
-  const isVisible = itemContainer.style.display === "block";
-  itemContainer.style.display = isVisible ? "none" : "block";
-  if (selectAllBtn) {
-    selectAllBtn.style.display = isVisible ? "none" : "inline";
-  }
-};
-
-
-    // Create "Select All" button
-if (items.length > 1) {
-  const selectAllBtn = document.createElement("small");
-  selectAllBtn.textContent = "Select All";
-  selectAllBtn.style.marginLeft = "1em";
-  selectAllBtn.style.cursor = "pointer";
-  selectAllBtn.style.color = "#007aff";
-  selectAllBtn.style.fontSize = "0.9em";
-
-  let allSelected = false;
-
-  selectAllBtn.onclick = () => {
-    allSelected = !allSelected;
-    const spans = itemContainer.querySelectorAll("span");
-
-    spans.forEach(span => {
-      const item = span.textContent;
-
-      if (allSelected && !span.classList.contains("selected")) {
-        span.classList.add("selected");
-        selectionOrder.push({ type: "item", category, item });
-      } else if (!allSelected && span.classList.contains("selected")) {
-        span.classList.remove("selected");
-        selectionOrder = selectionOrder.filter(
-          e => !(e.type === "item" && e.category === category && e.item === item)
-        );
-      }
-    });
-
-    selectAllBtn.textContent = allSelected ? "Unselect All" : "Select All";
-    updateModalTitleState();
-  };
-
-  label.appendChild(selectAllBtn);
-}
-
-
+    // Create the items
     items.forEach((item) => {
       const span = document.createElement("span");
       span.textContent = item;
@@ -721,7 +683,7 @@ if (items.length > 1) {
             !(e.type === "item" && e.category === category && e.item === item)
           );
         }
-        updateModalTitleState(); // <-- call here after toggling
+        updateModalTitleState();
       };
 
       itemContainer.appendChild(span);
@@ -733,10 +695,9 @@ if (items.length > 1) {
   });
 
   modal.style.display = "flex";
-
-  // Initial update (in case there are pre-existing selections)
   updateModalTitleState();
 }
+
 
 
 
