@@ -622,6 +622,43 @@ function openModal(existingSelections = []) {
       itemContainer.style.display = isVisible ? "none" : "block";
     };
 
+    // Create "Select All" button
+if (items.length > 1) {
+  const selectAllBtn = document.createElement("small");
+  selectAllBtn.textContent = "Select All";
+  selectAllBtn.style.marginLeft = "1em";
+  selectAllBtn.style.cursor = "pointer";
+  selectAllBtn.style.color = "#007aff";
+  selectAllBtn.style.fontSize = "0.9em";
+
+  let allSelected = false;
+
+  selectAllBtn.onclick = () => {
+    allSelected = !allSelected;
+    const spans = itemContainer.querySelectorAll("span");
+
+    spans.forEach(span => {
+      const item = span.textContent;
+
+      if (allSelected && !span.classList.contains("selected")) {
+        span.classList.add("selected");
+        selectionOrder.push({ type: "item", category, item });
+      } else if (!allSelected && span.classList.contains("selected")) {
+        span.classList.remove("selected");
+        selectionOrder = selectionOrder.filter(
+          e => !(e.type === "item" && e.category === category && e.item === item)
+        );
+      }
+    });
+
+    selectAllBtn.textContent = allSelected ? "Unselect All" : "Select All";
+    updateModalTitleState();
+  };
+
+  label.appendChild(selectAllBtn);
+}
+
+
     items.forEach((item) => {
       const span = document.createElement("span");
       span.textContent = item;
