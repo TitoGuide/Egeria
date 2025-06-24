@@ -559,7 +559,13 @@ function updateDayCount() {
 
 function updateModalTitleState() {
   const modalTitle = document.getElementById("modalTitle");
-  const hasSelections = selectionOrder.length > 0;
+  const modal = document.getElementById("modal");
+
+  if (!modal || modal.style.display === "none") return;
+
+  const selectedSpans = modal.querySelectorAll("span.selected");
+  const hasSelections = selectedSpans.length > 0;
+
   modalTitle.textContent = hasSelections ? "Accept Selection" : "Select Activities";
   modalTitle.style.background = hasSelections ? "#007aff" : "#faffbd";
   modalTitle.style.color = hasSelections ? "white" : "#333";
@@ -706,7 +712,6 @@ span.onclick = () => {
 
   modal.style.display = "flex";
 
-  // Initial update (in case there are pre-existing selections)
   updateModalTitleState();
 }
 
