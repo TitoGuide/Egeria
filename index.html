@@ -559,20 +559,16 @@ function updateDayCount() {
 
 function updateModalTitleState() {
   const modalTitle = document.getElementById("modalTitle");
-  const modalItems = document.getElementById("modalItems");
-
-  if (!modalTitle || !modalItems) return;
-
-  const anySelected = modalItems.querySelectorAll("span.selected").length > 0;
-
-  modalTitle.textContent = anySelected ? "Accept Selection" : "Select Activities";
-  modalTitle.style.background = anySelected ? "#007aff" : "#faffbd";
-  modalTitle.style.color = anySelected ? "white" : "#333";
+  const hasSelections = selectionOrder.length > 0;
+  modalTitle.textContent = hasSelections ? "Accept Selection" : "Select Activities";
+  modalTitle.style.background = hasSelections ? "#007aff" : "#faffbd";
+  modalTitle.style.color = hasSelections ? "white" : "#333";
 }
 
 function openModal(existingSelections = []) {
   const modal = document.getElementById("modal");
   const modalItems = document.getElementById("modalItems");
+
   modalItems.innerHTML = "";
 
   const sortedCategories = Object.keys(siteDatabase).sort((a, b) =>
@@ -582,62 +578,64 @@ function openModal(existingSelections = []) {
   sortedCategories.forEach((category) => {
     const rawItems = siteDatabase[category];
     const items = rawItems
-      ? rawItems.split(",").map(item => item.trim()).filter(Boolean).sort((a, b) => a.localeCompare(b))
+      ? rawItems.split(",").map((item) => item.trim()).filter(Boolean).sort((a, b) => a.localeCompare(b))
       : [];
 
     const group = document.createElement("div");
     const label = document.createElement("h4");
     label.textContent = category.trim();
+    const isEligibleForToggle = !category.startsWith(" ");
+let toggleBtn = null;
+
+if (isEligibleForToggle) {
+  toggleBtn = document.createElement("small");
+  toggleBtn.textContent = "All";
+  toggleBtn.style.marginLeft = "1em";
+  toggleBtn.style.cursor = "pointer";
+  toggleBtn.style.color = "#007aff";
+  toggleBtn.style.fontSize = "0.9em";
+  toggleBtn.style.display = "none"; // hidden until expanded
+  label.appendChild(toggleBtn);
+
+  let allSelected = false;
+  toggleBtn.textContent = "All"; // Reset label each time modal opens
+
+  toggleBtn.onclick = (e) => {
+    e.stopPropagation();
+    allSelected = !allSelected;
+    toggleBtn.textContent = allSelected ? "None" : "All";
+
+    const spans = itemContainer.querySelectorAll("span");
+
+    spans.forEach(span => {
+      const item = span.textContent;
+
+      if (allSelected && !span.classList.contains("selected")) {
+        span.classList.add("selected");
+        selectionOrder.push({ type: "item", category, item });
+      } else if (!allSelected && span.classList.contains("selected")) {
+        span.classList.remove("selected");
+        selectionOrder = selectionOrder.filter(e =>
+          !(e.type === "item" && e.category === category && e.item === item)
+        );
+      }
+    });
+
+    updateModalTitleState();
+  };
+}
+
+
     label.style.cursor = "pointer";
     label.style.marginBottom = "0.3em";
 
-    const isEligibleForToggle = !category.startsWith(" ");
-    let toggleBtn = null;
-
-    if (isEligibleForToggle && items.length > 0) {
-      toggleBtn = document.createElement("small");
-      toggleBtn.textContent = "All";
-      toggleBtn.style.marginLeft = "1em";
-      toggleBtn.style.cursor = "pointer";
-      toggleBtn.style.color = "#007aff";
-      toggleBtn.style.fontSize = "0.9em";
-      toggleBtn.style.display = "none";
-      label.appendChild(toggleBtn);
-
-      let allSelected = false;
-
-      toggleBtn.onclick = (e) => {
-        e.stopPropagation();
-        allSelected = !allSelected;
-        toggleBtn.textContent = allSelected ? "None" : "All";
-
-        const spans = itemContainer.querySelectorAll("span");
-
-        spans.forEach(span => {
-          const item = span.textContent;
-
-          if (allSelected && !span.classList.contains("selected")) {
-            span.classList.add("selected");
-            if (!selectionOrder.some(e => e.type === "item" && e.category === category && e.item === item)) {
-              selectionOrder.push({ type: "item", category, item });
-            }
-          } else if (!allSelected && span.classList.contains("selected")) {
-            span.classList.remove("selected");
-            selectionOrder = selectionOrder.filter(e =>
-              !(e.type === "item" && e.category === category && e.item === item)
-            );
-          }
-        });
-
-        updateModalTitleState();
-      };
-    }
-
+    // Apply visual class
     label.classList.add(rawItems?.trim() ? "has-items" : "no-items");
+
     group.appendChild(label);
 
     if (items.length === 0) {
-      // Manual category
+      // Manual category - no items
       label.onclick = () => {
         if (manualSelections[category]) {
           delete manualSelections[category];
@@ -648,22 +646,28 @@ function openModal(existingSelections = []) {
           label.style.background = "#d0e0ff";
           selectionOrder.push({ type: "manual", label: category });
         }
-        updateModalTitleState();
+        updateModalTitleState(); // <-- call here after toggling
       };
 
+      group.appendChild(label);
       modalItems.appendChild(group);
       return;
     }
 
+    // Expandable group with items
     const itemContainer = document.createElement("div");
     itemContainer.style.display = items.length > 1 ? "none" : "block";
     itemContainer.style.marginBottom = "1em";
 
     label.onclick = () => {
-      const isVisible = itemContainer.style.display === "block";
-      itemContainer.style.display = isVisible ? "none" : "block";
-      if (toggleBtn) toggleBtn.style.display = isVisible ? "none" : "inline";
-    };
+  const isVisible = itemContainer.style.display === "block";
+  itemContainer.style.display = isVisible ? "none" : "block";
+
+  if (toggleBtn) {
+    toggleBtn.style.display = isVisible ? "none" : "inline";
+  }
+};
+
 
     items.forEach((item) => {
       const span = document.createElement("span");
@@ -674,32 +678,37 @@ function openModal(existingSelections = []) {
       }
 
       span.onclick = () => {
-        const isNowSelected = span.classList.toggle("selected");
+  span.classList.toggle("selected");
 
-        if (isNowSelected) {
-          if (!selectionOrder.some(e => e.type === "item" && e.category === category && e.item === item)) {
-            selectionOrder.push({ type: "item", category, item });
-          }
-        } else {
-          selectionOrder = selectionOrder.filter(e =>
-            !(e.type === "item" && e.category === category && e.item === item)
-          );
-        }
+  if (span.classList.contains("selected")) {
+    const alreadyIn = selectionOrder.some(e =>
+      e.type === "item" && e.category === category && e.item === item
+    );
+    if (!alreadyIn) {
+      selectionOrder.push({ type: "item", category, item });
+    }
+  } else {
+    selectionOrder = selectionOrder.filter(e =>
+      !(e.type === "item" && e.category === category && e.item === item)
+    );
+  }
 
-        updateModalTitleState();
-      };
+  updateModalTitleState();
+};
 
       itemContainer.appendChild(span);
     });
 
+    group.appendChild(label);
     group.appendChild(itemContainer);
     modalItems.appendChild(group);
   });
 
   modal.style.display = "flex";
+
+  // Initial update (in case there are pre-existing selections)
   updateModalTitleState();
 }
-
 
 
 
