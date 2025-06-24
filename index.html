@@ -684,8 +684,9 @@ if (isEligibleForToggle) {
           selectionOrder.push({ type: "item", category, item });
         } else {
           selectionOrder = selectionOrder.filter(e =>
-            !(e.type === "item" && e.category === category && e.item === item)
-          );
+  !(e.type === "item" && e.category === category)
+);
+
         }
         updateModalTitleState(); // <-- call here after toggling
       };
