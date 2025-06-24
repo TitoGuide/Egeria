@@ -677,17 +677,17 @@ if (isEligibleForToggle) {
         span.classList.add("selected");
       }
 
-      span.onclick = () => {
-  span.classList.toggle("selected");
+span.onclick = () => {
+  const item = span.textContent;
+  const selected = span.classList.toggle("selected");
 
-  if (span.classList.contains("selected")) {
-    const alreadyIn = selectionOrder.some(e =>
-      e.type === "item" && e.category === category && e.item === item
-    );
-    if (!alreadyIn) {
+  if (selected) {
+    // Prevent duplicates
+    if (!selectionOrder.some(e => e.type === "item" && e.category === category && e.item === item)) {
       selectionOrder.push({ type: "item", category, item });
     }
   } else {
+    // Remove only this item from selectionOrder
     selectionOrder = selectionOrder.filter(e =>
       !(e.type === "item" && e.category === category && e.item === item)
     );
