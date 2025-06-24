@@ -681,15 +681,9 @@ if (isEligibleForToggle) {
         span.classList.toggle("selected");
 
         if (span.classList.contains("selected")) {
-  const alreadyIn = selectionOrder.some(e =>
-    e.type === "item" && e.category === category && e.item === item
-  );
-  if (!alreadyIn) {
-    selectionOrder.push({ type: "item", category, item });
-  }
-}
+          selectionOrder.push({ type: "item", category, item });
         } else {
-selectionOrder = selectionOrder.filter(e =>
+          selectionOrder = selectionOrder.filter(e =>
   !(e.type === "item" && e.category === category)
 );
 
