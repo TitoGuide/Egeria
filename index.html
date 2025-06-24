@@ -584,6 +584,48 @@ function openModal(existingSelections = []) {
     const group = document.createElement("div");
     const label = document.createElement("h4");
     label.textContent = category.trim();
+    const isEligibleForToggle = !category.startsWith(" ");
+let toggleBtn = null;
+
+if (isEligibleForToggle) {
+  toggleBtn = document.createElement("small");
+  toggleBtn.textContent = "All";
+  toggleBtn.style.marginLeft = "1em";
+  toggleBtn.style.cursor = "pointer";
+  toggleBtn.style.color = "#007aff";
+  toggleBtn.style.fontSize = "0.9em";
+  toggleBtn.style.display = "none"; // hidden until expanded
+  label.appendChild(toggleBtn);
+
+  let allSelected = false;
+  toggleBtn.textContent = "All"; // Reset label each time modal opens
+
+  toggleBtn.onclick = (e) => {
+    e.stopPropagation();
+    allSelected = !allSelected;
+    toggleBtn.textContent = allSelected ? "None" : "All";
+
+    const spans = itemContainer.querySelectorAll("span");
+
+    spans.forEach(span => {
+      const item = span.textContent;
+
+      if (allSelected && !span.classList.contains("selected")) {
+        span.classList.add("selected");
+        selectionOrder.push({ type: "item", category, item });
+      } else if (!allSelected && span.classList.contains("selected")) {
+        span.classList.remove("selected");
+        selectionOrder = selectionOrder.filter(e =>
+          !(e.type === "item" && e.category === category && e.item === item)
+        );
+      }
+    });
+
+    updateModalTitleState();
+  };
+}
+
+
     label.style.cursor = "pointer";
     label.style.marginBottom = "0.3em";
 
@@ -618,9 +660,14 @@ function openModal(existingSelections = []) {
     itemContainer.style.marginBottom = "1em";
 
     label.onclick = () => {
-      const isVisible = itemContainer.style.display === "block";
-      itemContainer.style.display = isVisible ? "none" : "block";
-    };
+  const isVisible = itemContainer.style.display === "block";
+  itemContainer.style.display = isVisible ? "none" : "block";
+
+  if (toggleBtn) {
+    toggleBtn.style.display = isVisible ? "none" : "inline";
+  }
+};
+
 
     items.forEach((item) => {
       const span = document.createElement("span");
