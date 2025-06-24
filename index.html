@@ -633,30 +633,30 @@ function openModal(existingSelections = []) {
       let allSelected = false;
 
       toggleBtn.onclick = (e) => {
-        e.stopPropagation();
-        allSelected = !allSelected;
-        toggleBtn.textContent = allSelected ? "None" : "All";
+  e.stopPropagation();
+  allSelected = !allSelected;
+  toggleBtn.textContent = allSelected ? "None" : "All";
 
-        const spans = itemContainer.querySelectorAll("span");
+  const spans = itemContainer.querySelectorAll("span");
 
-        spans.forEach(span => {
-          const item = span.textContent;
+  spans.forEach(span => {
+    const item = span.textContent;
+    span.classList.toggle("selected", allSelected);
+  });
 
-          if (allSelected && !span.classList.contains("selected")) {
-            span.classList.add("selected");
-            if (!selectionOrder.some(e => e.type === "item" && e.category === category && e.item === item)) {
-              selectionOrder.push({ type: "item", category, item });
-            }
-          } else if (!allSelected && span.classList.contains("selected")) {
-            span.classList.remove("selected");
-            selectionOrder = selectionOrder.filter(e =>
-              !(e.type === "item" && e.category === category && e.item === item)
-            );
-          }
-        });
+  // Clean existing selections for this category
+  selectionOrder = selectionOrder.filter(e => !(e.type === "item" && e.category === category));
 
-        updateModalTitleState();
-      };
+  // Re-add if allSelected
+  if (allSelected) {
+    items.forEach(item => {
+      selectionOrder.push({ type: "item", category, item });
+    });
+  }
+
+  updateModalTitleState();
+};
+
     }
 
     // Toggle category open/collapse
