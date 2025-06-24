@@ -559,17 +559,15 @@ function updateDayCount() {
 
 function updateModalTitleState() {
   const modalTitle = document.getElementById("modalTitle");
-  const modalItems = document.getElementById("modalItems");
 
-  if (!modalTitle || !modalItems) return;
+  // Recalculate live selection state from selectionOrder
+  const hasSelections = selectionOrder.length > 0 || Object.keys(manualSelections).length > 0;
 
-  const anySelected = modalItems.querySelectorAll("span.selected").length > 0 ||
-                      Object.keys(manualSelections).length > 0;
-
-  modalTitle.textContent = anySelected ? "Accept Selection" : "Select Activities";
-  modalTitle.style.background = anySelected ? "#007aff" : "#faffbd";
-  modalTitle.style.color = anySelected ? "white" : "#333";
+  modalTitle.textContent = hasSelections ? "Accept Selection" : "Select Activities";
+  modalTitle.style.background = hasSelections ? "#007aff" : "#faffbd";
+  modalTitle.style.color = hasSelections ? "white" : "#333";
 }
+
 
 function openModal(existingSelections = []) {
   const modal = document.getElementById("modal");
