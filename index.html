@@ -297,6 +297,14 @@ input[readonly] {
   font-style: italic;
   opacity: 0.8;
 }
+.selected-manual {
+  background-color: #007aff;
+  color: white;
+  font-weight: bold;
+  border-radius: 6px;
+  padding: 0.3em 0.6em;
+  display: inline-block;
+}
 
   </style>
 </head>
@@ -655,20 +663,17 @@ group.appendChild(headerRow);
 
     if (items.length === 0) {
       // Manual category
-      label.onclick = () => {
+
+label.onclick = () => {
   const isSelected = !!manualSelections[category];
 
   if (isSelected) {
     delete manualSelections[category];
-    label.style.background = "";
-    label.style.color = "";
-    label.style.fontWeight = "";
+    label.classList.remove("selected-manual");
     selectionOrder = selectionOrder.filter(e => e.label !== category);
   } else {
     manualSelections[category] = true;
-    label.style.background = "#007aff";
-    label.style.color = "white";
-    label.style.fontWeight = "bold";
+    label.classList.add("selected-manual");
     selectionOrder.push({ type: "manual", label: category });
   }
 
