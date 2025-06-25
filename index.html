@@ -600,8 +600,6 @@ function openModal(existingSelections = []) {
     if (isEligibleForToggle && items.length > 0) {
       toggleBtn = document.createElement("small");
       toggleBtn.textContent = "All";
-      toggleBtn.style.marginLeft = "auto";
-      toggleBtn.style.paddingLeft = "10em";
       toggleBtn.style.cursor = "pointer";
       toggleBtn.style.color = "#007aff";
       toggleBtn.style.fontSize = "0.9em";
@@ -638,7 +636,16 @@ function openModal(existingSelections = []) {
     }
 
     label.classList.add(rawItems?.trim() ? "has-items" : "no-items");
-    group.appendChild(label);
+const headerRow = document.createElement("div");
+headerRow.style.display = "flex";
+headerRow.style.justifyContent = "space-between";
+headerRow.style.alignItems = "center";
+headerRow.style.marginBottom = "0.3em";
+
+headerRow.appendChild(label);
+if (toggleBtn) headerRow.appendChild(toggleBtn);
+
+group.appendChild(headerRow);
 
     if (items.length === 0) {
       // Manual category
