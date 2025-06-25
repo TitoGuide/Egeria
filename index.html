@@ -396,7 +396,7 @@ fetch('sites.json')
   .then(response => response.json())
   .then(data => {
     siteDatabase = data;
-    // Now you can open modal or initialize your app as usual
+
   })
   .catch(error => {
     console.error("Failed to load site database:", error);
@@ -437,6 +437,7 @@ function generateItinerary() {
 
   document.getElementById("output").textContent = output.trim();
 }
+
 
 //////////////////////////////
 // END FUNCTION: generateItinerary //
@@ -500,10 +501,10 @@ function addDay() {
       ${
         dayCount < totalDays
           ? `<button style="flex: 1; padding: 0.6em; font-size: 0.9em; background: #007aff; color: white;" onclick="addDay()">Next Day</button>`
-          : : `
-  <button style="flex: 1; padding: 0.6em; font-size: 0.9em; background: #888; color: white;" onclick="openSignatureModal()">Signature</button>
-  <button style="flex: 1; padding: 0.6em; font-size: 0.9em; background: green; color: white;" onclick="generateItinerary()">Summarize</button>
-`
+          : `
+            <button style="flex: 1; padding: 0.6em; font-size: 0.9em; background: #888; color: white;" onclick="promptSignature()">Signature</button>
+            <button style="flex: 1; padding: 0.6em; font-size: 0.9em; background: green; color: white;" onclick="generateItinerary()">Summarize</button>
+          `
       }
     </div>
   `;
@@ -851,39 +852,6 @@ function promptSignature() {
   }
 }
 
-let savedSignature = localStorage.getItem("itinerarySignature") || "";
-
-function openSignatureModal() {
-  const input = document.getElementById("signatureInput");
-  input.value = savedSignature;
-  input.readOnly = true;
-  document.getElementById("signatureModal").style.display = "flex";
-}
-
-function closeSignatureModal(save = false) {
-  if (save) {
-    const input = document.getElementById("signatureInput").value.trim();
-    savedSignature = input;
-    localStorage.setItem("itinerarySignature", input);
-  }
-  document.getElementById("signatureModal").style.display = "none";
-}
-
-function editSignature() {
-  const input = document.getElementById("signatureInput");
-  input.readOnly = false;
-  input.focus();
-}
-
-function removeSignature() {
-  savedSignature = "";
-  localStorage.removeItem("itinerarySignature");
-  document.getElementById("signatureInput").value = "";
-  document.getElementById("signatureModal").style.display = "none";
-}
-
-
-
 
 </script>
 
@@ -908,51 +876,12 @@ function removeSignature() {
     });
   }
 </script>
-
-<script>
-  function showSignatureModal() {
-    const modal = document.getElementById("signatureModal");
-    const input = document.getElementById("signatureInput");
-    input.value = localStorage.getItem("userSignature") || "";
-    modal.style.display = "flex";
-  }
-
-  function closeSignatureModal() {
-    document.getElementById("signatureModal").style.display = "none";
-  }
-
-  function saveSignature() {
-    const text = document.getElementById("signatureInput").value.trim();
-    if (text) {
-      localStorage.setItem("userSignature", text);
-    } else {
-      localStorage.removeItem("userSignature");
-    }
-    closeSignatureModal();
-  }
-
-  function removeSignature() {
-    localStorage.removeItem("userSignature");
-    document.getElementById("signatureInput").value = "";
-    closeSignatureModal();
-  }
-</script>
-
 <footer id="signature">
   <span>Egeria – Itinerary Builder · Made by <strong>Tito</strong></span>
 </footer>
+</body>
+</html>
 
-<div id="signatureModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center;">
-  <div style="background:white; padding:1.5em; border-radius:8px; width:90%; max-width:500px; box-shadow:0 2px 10px rgba(0,0,0,0.3); text-align:center;">
-    <h3 style="margin-top:0;">Signature</h3>
-    <textarea id="signatureInput" rows="3" readonly style="width:100%; font-size:1em; padding:0.6em; border-radius:6px; border:1px solid #ccc;"></textarea>
-    <div style="margin-top:1em; display:flex; justify-content:space-between; gap:0.5em;">
-      <button onclick="closeSignatureModal(true)" style="flex:1; background:#007aff; color:white; border:none; padding:0.6em; border-radius:6px;">✅ Accept</button>
-      <button onclick="editSignature()" style="flex:1; background:#fbbc04; color:white; border:none; padding:0.6em; border-radius:6px;">✏️ Edit</button>
-      <button onclick="removeSignature()" style="flex:1; background:#d93025; color:white; border:none; padding:0.6em; border-radius:6px;">❌ Remove</button>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>
