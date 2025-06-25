@@ -906,7 +906,7 @@ function removeSignature() {
   function showSignatureModal() {
     const modal = document.getElementById("signatureModal");
     const input = document.getElementById("signatureInput");
-    input.value = localStorage.getItem("itinerarySignature") || "";
+    input.value = localStorage.getItem("userSignature") || "";
     modal.style.display = "flex";
   }
 
@@ -917,20 +917,19 @@ function removeSignature() {
   function saveSignature() {
     const text = document.getElementById("signatureInput").value.trim();
     if (text) {
-      localStorage.setItem("itinerarySignature", text);
+      localStorage.setItem("userSignature", text);
     } else {
-      localStorage.removeItem("itinerarySignature");
+      localStorage.removeItem("userSignature");
     }
     closeSignatureModal();
   }
 
   function removeSignature() {
-    localStorage.removeItem("itinerarySignature");
+    localStorage.removeItem("userSignature");
     document.getElementById("signatureInput").value = "";
     closeSignatureModal();
   }
 </script>
-
 
 <footer id="signature">
   <span>Egeria – Itinerary Builder · Made by <strong>Tito</strong></span>
