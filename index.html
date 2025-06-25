@@ -512,6 +512,9 @@ function addDay() {
 //////////////////////////////
 // FUNCTION: updateDayCount //
 //////////////////////////////
+
+
+
 function updateDayCount() {
   const startDateInput = document.getElementById("startDate").value;
   const endDateInput = document.getElementById("endDate").value;
@@ -559,22 +562,25 @@ function updateDayCount() {
 
 function updateModalTitleState() {
   const modalTitle = document.getElementById("modalTitle");
+  const modalItems = document.getElementById("modalItems");
 
-  // Recalculate live selection state from selectionOrder
-  const hasSelections = selectionOrder.length > 0 || Object.keys(manualSelections).length > 0;
+  if (!modalTitle || !modalItems) return;
 
-  modalTitle.textContent = hasSelections ? "Accept Selection" : "Select Activities";
-  modalTitle.style.background = hasSelections ? "#007aff" : "#faffbd";
-  modalTitle.style.color = hasSelections ? "white" : "#333";
+  const anySelected = modalItems.querySelectorAll("span.selected").length > 0;
+
+  modalTitle.textContent = anySelected ? "Accept Selection" : "Select Activities";
+  modalTitle.style.background = anySelected ? "#007aff" : "#faffbd";
+  modalTitle.style.color = anySelected ? "white" : "#333";
 }
-
 
 function openModal(existingSelections = []) {
   const modal = document.getElementById("modal");
   const modalItems = document.getElementById("modalItems");
   modalItems.innerHTML = "";
 
-  const sortedCategories = Object.keys(siteDatabase).sort((a, b) => a.localeCompare(b));
+  const sortedCategories = Object.keys(siteDatabase).sort((a, b) =>
+    a.localeCompare(b)
+  );
 
   sortedCategories.forEach((category) => {
     const rawItems = siteDatabase[category];
@@ -587,43 +593,14 @@ function openModal(existingSelections = []) {
     label.textContent = category.trim();
     label.style.cursor = "pointer";
     label.style.marginBottom = "0.3em";
-    group.appendChild(label);
 
-    const hasItems = items.length > 0;
     const isEligibleForToggle = !category.startsWith(" ");
-
-    label.classList.add(hasItems ? "has-items" : "no-items");
-
-    // Manual category
-    if (!hasItems) {
-      label.onclick = () => {
-        if (manualSelections[category]) {
-          delete manualSelections[category];
-          label.style.background = "";
-          selectionOrder = selectionOrder.filter(e => !(e.type === "manual" && e.label === category));
-        } else {
-          manualSelections[category] = true;
-          label.style.background = "#d0e0ff";
-          selectionOrder.push({ type: "manual", label: category });
-        }
-        updateModalTitleState();
-      };
-      modalItems.appendChild(group);
-      return;
-    }
-
-    // Has items → expandable with optional toggle
-    const itemContainer = document.createElement("div");
-    itemContainer.style.display = "none";
-    itemContainer.style.marginBottom = "1em";
-    group.appendChild(itemContainer);
-
     let toggleBtn = null;
 
-    if (isEligibleForToggle) {
+    if (isEligibleForToggle && items.length > 0) {
       toggleBtn = document.createElement("small");
       toggleBtn.textContent = "All";
-      toggleBtn.style.marginLeft = "1em";
+      toggleBtn.style.marginLeft = "auto";
       toggleBtn.style.cursor = "pointer";
       toggleBtn.style.color = "#007aff";
       toggleBtn.style.fontSize = "0.9em";
@@ -633,40 +610,64 @@ function openModal(existingSelections = []) {
       let allSelected = false;
 
       toggleBtn.onclick = (e) => {
-  e.stopPropagation();
-  allSelected = !allSelected;
-  toggleBtn.textContent = allSelected ? "None" : "All";
+        e.stopPropagation();
+        allSelected = !allSelected;
+        toggleBtn.textContent = allSelected ? "None" : "All";
 
-  const spans = itemContainer.querySelectorAll("span");
+        const spans = itemContainer.querySelectorAll("span");
 
-  spans.forEach(span => {
-    const item = span.textContent;
-    span.classList.toggle("selected", allSelected);
-  });
+        spans.forEach(span => {
+          const item = span.textContent;
 
-  // Clean existing selections for this category
-  selectionOrder = selectionOrder.filter(e => !(e.type === "item" && e.category === category));
+          if (allSelected && !span.classList.contains("selected")) {
+            span.classList.add("selected");
+            if (!selectionOrder.some(e => e.type === "item" && e.category === category && e.item === item)) {
+              selectionOrder.push({ type: "item", category, item });
+            }
+          } else if (!allSelected && span.classList.contains("selected")) {
+            span.classList.remove("selected");
+            selectionOrder = selectionOrder.filter(e =>
+              !(e.type === "item" && e.category === category && e.item === item)
+            );
+          }
+        });
 
-  // Re-add if allSelected
-  if (allSelected) {
-    items.forEach(item => {
-      selectionOrder.push({ type: "item", category, item });
-    });
-  }
-
-  updateModalTitleState();
-};
-
+        updateModalTitleState();
+      };
     }
 
-    // Toggle category open/collapse
+    label.classList.add(rawItems?.trim() ? "has-items" : "no-items");
+    group.appendChild(label);
+
+    if (items.length === 0) {
+      // Manual category
+      label.onclick = () => {
+        if (manualSelections[category]) {
+          delete manualSelections[category];
+          label.style.background = "";
+          selectionOrder = selectionOrder.filter(e => e.label !== category);
+        } else {
+          manualSelections[category] = true;
+          label.style.background = "#d0e0ff";
+          selectionOrder.push({ type: "manual", label: category });
+        }
+        updateModalTitleState();
+      };
+
+      modalItems.appendChild(group);
+      return;
+    }
+
+    const itemContainer = document.createElement("div");
+    itemContainer.style.display = items.length > 1 ? "none" : "block";
+    itemContainer.style.marginBottom = "1em";
+
     label.onclick = () => {
       const isVisible = itemContainer.style.display === "block";
       itemContainer.style.display = isVisible ? "none" : "block";
       if (toggleBtn) toggleBtn.style.display = isVisible ? "none" : "inline";
     };
 
-    // Add items
     items.forEach((item) => {
       const span = document.createElement("span");
       span.textContent = item;
@@ -676,9 +677,9 @@ function openModal(existingSelections = []) {
       }
 
       span.onclick = () => {
-        const selected = span.classList.toggle("selected");
+        const isNowSelected = span.classList.toggle("selected");
 
-        if (selected) {
+        if (isNowSelected) {
           if (!selectionOrder.some(e => e.type === "item" && e.category === category && e.item === item)) {
             selectionOrder.push({ type: "item", category, item });
           }
@@ -694,13 +695,13 @@ function openModal(existingSelections = []) {
       itemContainer.appendChild(span);
     });
 
+    group.appendChild(itemContainer);
     modalItems.appendChild(group);
   });
 
   modal.style.display = "flex";
   updateModalTitleState();
 }
-
 
 
 
