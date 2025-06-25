@@ -408,6 +408,8 @@ fetch('sites.json')
 //////////////////////////////
 // FUNCTION: generateItinerary //
 //////////////////////////////
+
+
 function generateItinerary() {
   const name = document.getElementById("tourName").value.trim();
   const start = document.getElementById("startDate").value;
@@ -429,15 +431,17 @@ function generateItinerary() {
       .map(line => "- " + line);
 
     output += `Day ${index + 1} – ${date}\n${activities.join("\n")}\n\n`;
-
-    document.getElementById("shareButton").style.display = "inline-block";
   });
 
-if (savedSignature) {
-  output += `Signature:\n${savedSignature}\n`;
+  const sig = localStorage.getItem("itinerarySignature");
+  if (sig) {
+    output += `Signature:\n${sig.trim()}\n`;
+  }
+
+  document.getElementById("output").textContent = output.trim();
+  document.getElementById("shareButton").style.display = "inline-block";
 }
-document.getElementById("output").textContent = output.trim();
-}
+
 //////////////////////////////
 // END FUNCTION: generateItinerary //
 //////////////////////////////
@@ -946,6 +950,7 @@ function removeSignature() {
     </div>
   </div>
 </div>
+
 
 </body>
 </html>
