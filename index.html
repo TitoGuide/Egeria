@@ -461,6 +461,8 @@ function addActivity(button) {
 //////////////////////////////
 // FUNCTION: addDay //
 //////////////////////////////
+
+
 function addDay() {
   if (dayCount >= totalDays) return;
 
@@ -479,39 +481,34 @@ function addDay() {
     dateString = baseDate.toLocaleDateString(undefined, options);
   }
 
-  let buttonHTML = `
-  <button type="button" onclick="addActivity(this)" style="background: orange; color: white;">+ Add Activity</button>
-`;
-
-
-  if (dayCount < totalDays) {
-    buttonHTML += `
-      <button type="button" onclick="addDay()">Next Day</button>
-    `;
-  } else {
-    buttonHTML += `
-      <button type="button" onclick="generateItinerary()" style="background: green">Summarize</button>
-    `;
-  }
-
+  // Construct day layout
   div.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8em; gap: 1em;">
+      <h3 style="margin: 0; flex-shrink: 0; white-space: nowrap;">Day ${dayCount}</h3>
+      <input type="text" class="day-date" value="${dateString}" style="flex-grow: 1; font-size: 1em; padding: 0.45em 0.5em; margin-top: -1px; border-radius: 6px; border: 1px solid #ccc;" />
+    </div>
 
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8em; gap: 1em;">
-  <h3 style="margin: 0; flex-shrink: 0; white-space: nowrap;">Day ${dayCount}</h3>
+    <div class="activity-box" style="display: none;">
+      <textarea placeholder="Add activity..." class="activity-input" rows="4" style="width:100%; font-size:1em;"></textarea>
+    </div>
 
-<input type="text" class="day-date" value="${dateString}" style="flex-grow: 1; font-size: 1em; padding: 0.45em 0.5em; margin-top: -1px; border-radius: 6px; border: 1px solid #ccc;" />
-
-</div>
-
-<div class="activity-box" style="display: none;">
-  <textarea placeholder="Add activity..." class="activity-input" rows="4" style="width:100%; font-size:1em;"></textarea>
-</div>
-
-  <div class="day-buttons">${buttonHTML}</div>
+    <div class="day-buttons" style="display: flex; gap: 4%; justify-content: space-between; margin-top: 1em;">
+      <button style="flex: 1; padding: 0.6em; font-size: 0.9em; background: orange; color: white;" onclick="addActivity(this)">+ Add Activity</button>
+      ${
+        dayCount < totalDays
+          ? `<button style="flex: 1; padding: 0.6em; font-size: 0.9em; background: #007aff; color: white;" onclick="addDay()">Next Day</button>`
+          : `
+            <button style="flex: 1; padding: 0.6em; font-size: 0.9em; background: #888; color: white;" onclick="promptSignature()">Signature</button>
+            <button style="flex: 1; padding: 0.6em; font-size: 0.9em; background: green; color: white;" onclick="generateItinerary()">Summarize</button>
+          `
+      }
+    </div>
   `;
 
   container.appendChild(div);
 }
+
+
 //////////////////////////////
 // END FUNCTION: addDay //
 //////////////////////////////
