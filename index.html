@@ -560,6 +560,8 @@ function updateDayCount() {
 //////////////////////////////
 
 
+
+
 function updateModalTitleState() {
   const modalTitle = document.getElementById("modalTitle");
   const modalItems = document.getElementById("modalItems");
@@ -654,17 +656,24 @@ group.appendChild(headerRow);
     if (items.length === 0) {
       // Manual category
       label.onclick = () => {
-        if (manualSelections[category]) {
-          delete manualSelections[category];
-          label.style.background = "";
-          selectionOrder = selectionOrder.filter(e => e.label !== category);
-        } else {
-          manualSelections[category] = true;
-          label.style.background = "#d0e0ff";
-          selectionOrder.push({ type: "manual", label: category });
-        }
-        updateModalTitleState();
-      };
+  const isSelected = !!manualSelections[category];
+
+  if (isSelected) {
+    delete manualSelections[category];
+    label.style.background = "";
+    label.style.color = "";
+    label.style.fontWeight = "";
+    selectionOrder = selectionOrder.filter(e => e.label !== category);
+  } else {
+    manualSelections[category] = true;
+    label.style.background = "#007aff";
+    label.style.color = "white";
+    label.style.fontWeight = "bold";
+    selectionOrder.push({ type: "manual", label: category });
+  }
+
+  updateModalTitleState();
+};
 
       modalItems.appendChild(group);
       return;
