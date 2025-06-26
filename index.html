@@ -846,10 +846,7 @@ document.getElementById("shareButton").addEventListener("click", () => {
 });
 
 function promptSignature() {
-  const input = prompt("Enter your closing signature or salutation:");
-  if (input !== null) {
-    localStorage.setItem("egeriaSignature", input.trim());
-  }
+  openSignatureModal();
 }
 
 function openSignatureModal() {
