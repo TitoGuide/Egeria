@@ -770,7 +770,6 @@ document.addEventListener("DOMContentLoaded", () => {
         outputChunks.push(`${entry.label}`);
       } else if (entry.type === "item") {
         const { category, item } = entry;
-
         if (category.includes("List of")) {
           const existingIndex = outputChunks.findIndex(chunk =>
             typeof chunk === "string" && !chunk.includes(":") && chunk.endsWith(".")
@@ -815,26 +814,23 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("startDate").addEventListener("change", updateDayCount);
   document.getElementById("endDate").addEventListener("change", updateDayCount);
 
-  // ✅ Signature input focus fix for iOS
+  // ✅ Signature modal fix for iOS: enable editing and keyboard
   const sigInput = document.getElementById("signatureInput");
+  const buttons = document.getElementById("signatureButtons");
+  const saveControls = document.getElementById("saveControls");
 
   if (sigInput) {
-    sigInput.addEventListener("click", () => {
-      requestAnimationFrame(() => {
-        sigInput.removeAttribute("readonly");
+    let activated = false;
 
-        setTimeout(() => {
-          sigInput.focus();
-          sigInput.setSelectionRange(sigInput.value.length, sigInput.value.length);
-        }, 0);
-
-        document.getElementById("signatureButtons").style.display = "none";
-        document.getElementById("saveControls").style.display = "flex";
-      });
+    sigInput.addEventListener("focus", () => {
+      if (!activated) {
+        activated = true;
+        buttons.style.display = "none";
+        saveControls.style.display = "flex";
+      }
     });
   }
 });
-
 
 ///////////////////////////////////////////
 // END DOMCONTENTLOADED LISTENER AND MODAL LOGIC //
