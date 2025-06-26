@@ -770,6 +770,7 @@ document.addEventListener("DOMContentLoaded", () => {
         outputChunks.push(`${entry.label}`);
       } else if (entry.type === "item") {
         const { category, item } = entry;
+
         if (category.includes("List of")) {
           const existingIndex = outputChunks.findIndex(chunk =>
             typeof chunk === "string" && !chunk.includes(":") && chunk.endsWith(".")
@@ -814,19 +815,22 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("startDate").addEventListener("change", updateDayCount);
   document.getElementById("endDate").addEventListener("change", updateDayCount);
 
-  // ✅ Signature input tap-to-edit behavior
+  // ✅ Signature input focus fix for iOS
   const sigInput = document.getElementById("signatureInput");
+
   if (sigInput) {
     sigInput.addEventListener("click", () => {
-      sigInput.removeAttribute("readonly");
+      requestAnimationFrame(() => {
+        sigInput.removeAttribute("readonly");
 
-      setTimeout(() => {
-        sigInput.focus();
-        sigInput.setSelectionRange(sigInput.value.length, sigInput.value.length);
-      }, 0);
+        setTimeout(() => {
+          sigInput.focus();
+          sigInput.setSelectionRange(sigInput.value.length, sigInput.value.length);
+        }, 0);
 
-      document.getElementById("signatureButtons").style.display = "none";
-      document.getElementById("saveControls").style.display = "flex";
+        document.getElementById("signatureButtons").style.display = "none";
+        document.getElementById("saveControls").style.display = "flex";
+      });
     });
   }
 });
