@@ -814,22 +814,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("startDate").addEventListener("change", updateDayCount);
   document.getElementById("endDate").addEventListener("change", updateDayCount);
 
-  // ✅ Signature modal fix for iOS: enable editing and keyboard
-  const sigInput = document.getElementById("signatureInput");
-  const buttons = document.getElementById("signatureButtons");
-  const saveControls = document.getElementById("saveControls");
 
-  if (sigInput) {
-    let activated = false;
-
-    sigInput.addEventListener("focus", () => {
-      if (!activated) {
-        activated = true;
-        buttons.style.display = "none";
-        saveControls.style.display = "flex";
-      }
-    });
-  }
 });
 
 ///////////////////////////////////////////
@@ -861,14 +846,38 @@ function openSignatureModal() {
   const removeBtn = document.getElementById("removeSignatureBtn");
 
   input.value = sig;
+
+  // Set readonly initially
   input.setAttribute("readonly", true);
 
+  // Restore buttons
   document.getElementById("saveControls").style.display = "none";
   document.getElementById("signatureButtons").style.display = "flex";
   removeBtn.style.display = sig ? "inline-block" : "none";
 
+  // Show modal
   document.getElementById("signatureModal").style.display = "flex";
+
+  // Allow touch to trigger input
+  input.addEventListener("touchend", () => {
+    input.removeAttribute("readonly");
+    input.focus();
+
+    document.getElementById("signatureButtons").style.display = "none";
+    document.getElementById("saveControls").style.display = "flex";
+  }, { once: true });
+
+  // Allow click fallback for desktop
+  input.addEventListener("click", () => {
+    input.removeAttribute("readonly");
+    input.focus();
+
+    document.getElementById("signatureButtons").style.display = "none";
+    document.getElementById("saveControls").style.display = "flex";
+  }, { once: true });
 }
+
+
 
 function closeSignatureModal(accept = false) {
   if (accept) {
@@ -936,7 +945,13 @@ function cancelEditSignature() {
   <div style="background:white; padding:1em; border-radius:8px; width:90%; max-width:500px; box-shadow:0 2px 10px rgba(0,0,0,0.3);">
     <h3 style="margin-top:0;">Signature</h3>
 
-<textarea id="signatureInput" rows="4" style="width:100%; font-size:1em; padding:0.5em; border-radius:6px; border:1px solid #ccc;"></textarea>
+<textarea id="signatureInput" rows="4"
+  style="width:100%; font-size:1em; padding:0.5em; border-radius:6px; border:1px solid #ccc;"
+  autocapitalize="sentences"
+  autocomplete="on"
+  autocorrect="on"
+  inputmode="text"
+></textarea>
 
     <div id="signatureButtons" style="display:flex; justify-content:space-between; margin-top:1em; gap:0.5em;">
       <button id="removeSignatureBtn" onclick="removeSignature()" style="flex:1; background:#dc3545; color:white; border:none; padding:0.6em; border-radius:6px;">❌ Remove</button>
