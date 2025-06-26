@@ -824,6 +824,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+document.getElementById("signatureInput").addEventListener("click", () => {
+  const input = document.getElementById("signatureInput");
+  input.removeAttribute("readonly");
+  document.getElementById("signatureButtons").style.display = "none";
+  document.getElementById("saveControls").style.display = "flex";
+});
+
 
 
 ///////////////////////////////////////////
@@ -850,43 +857,46 @@ function promptSignature() {
 }
 
 function openSignatureModal() {
+  const sig = localStorage.getItem("itinerarySignature") || "";
   const input = document.getElementById("signatureInput");
-  const saved = localStorage.getItem("itinerarySignature") || "";
-  input.value = saved;
-  input.readOnly = true;
+  const removeBtn = document.getElementById("removeSignatureBtn");
 
-  document.getElementById("signatureButtons").style.display = "flex";
+  input.value = sig;
+  input.setAttribute("readonly", true);
+
   document.getElementById("saveControls").style.display = "none";
+  document.getElementById("signatureButtons").style.display = "flex";
+  removeBtn.style.display = sig ? "inline-block" : "none";
+
   document.getElementById("signatureModal").style.display = "flex";
 }
 
-function editSignature() {
-  document.getElementById("signatureInput").readOnly = false;
-  document.getElementById("signatureButtons").style.display = "none";
-  document.getElementById("saveControls").style.display = "flex";
+function closeSignatureModal(accept = false) {
+  if (accept) {
+    const value = document.getElementById("signatureInput").value.trim();
+    if (value) {
+      localStorage.setItem("itinerarySignature", value);
+    }
+  }
+  document.getElementById("signatureModal").style.display = "none";
 }
 
 function saveSignature() {
   const value = document.getElementById("signatureInput").value.trim();
   if (value) {
     localStorage.setItem("itinerarySignature", value);
-  } else {
-    localStorage.removeItem("itinerarySignature");
   }
   closeSignatureModal(true);
 }
 
 function removeSignature() {
   localStorage.removeItem("itinerarySignature");
-  closeSignatureModal(true);
+  document.getElementById("signatureInput").value = "";
+  closeSignatureModal();
 }
 
 function cancelEditSignature() {
-  openSignatureModal(); // reload last saved value
-}
-
-function closeSignatureModal(accepted = false) {
-  document.getElementById("signatureModal").style.display = "none";
+  openSignatureModal(); // reload from saved
 }
 
 
@@ -919,19 +929,19 @@ function closeSignatureModal(accepted = false) {
 </footer>
 
 <div id="signatureModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center;">
-  <div style="background:white; padding:1em; border-radius:8px; width:90%; max-width:500px; box-shadow:0 2px 10px rgba(0,0,0,0.3); display:flex; flex-direction:column;">
+  <div style="background:white; padding:1em; border-radius:8px; width:90%; max-width:500px; box-shadow:0 2px 10px rgba(0,0,0,0.3);">
     <h3 style="margin-top:0;">Signature</h3>
-    <textarea id="signatureInput" rows="4" style="width:100%; font-size:1em; padding:0.5em; border-radius:6px; border:1px solid #ccc;" readonly></textarea>
-    
-    <div id="signatureButtons" style="margin-top:1em; display:flex; justify-content:space-between; gap:0.5em;">
-      <button onclick="removeSignature()" style="flex:1; background:#d9534f; color:white; border:none; padding:0.6em; border-radius:6px;">❌ Remove</button>
-      <button onclick="editSignature()" style="flex:1; background:#ffc107; color:black; border:none; padding:0.6em; border-radius:6px;">✏️ Edit</button>
+
+    <textarea id="signatureInput" rows="4" readonly style="width:100%; font-size:1em; padding:0.5em; border-radius:6px; border:1px solid #ccc;"></textarea>
+
+    <div id="signatureButtons" style="display:flex; justify-content:space-between; margin-top:1em; gap:0.5em;">
+      <button id="removeSignatureBtn" onclick="removeSignature()" style="flex:1; background:#dc3545; color:white; border:none; padding:0.6em; border-radius:6px;">❌ Remove</button>
       <button onclick="closeSignatureModal(true)" style="flex:1; background:#28a745; color:white; border:none; padding:0.6em; border-radius:6px;">✅ Accept</button>
     </div>
 
-    <div id="saveControls" style="margin-top:1em; display:none; flex-direction:row; gap:0.5em;">
-      <button onclick="saveSignature()" style="flex:1; background:#28a745; color:white; border:none; padding:0.6em; border-radius:6px;">💾 Save</button>
+    <div id="saveControls" style="display:none; justify-content:space-between; margin-top:1em; gap:0.5em;">
       <button onclick="cancelEditSignature()" style="flex:1; background:#6c757d; color:white; border:none; padding:0.6em; border-radius:6px;">Cancel</button>
+      <button onclick="saveSignature()" style="flex:1; background:#007aff; color:white; border:none; padding:0.6em; border-radius:6px;">Save</button>
     </div>
   </div>
 </div>
