@@ -442,7 +442,9 @@ function generateItinerary() {
   const sig = localStorage.getItem("itinerarySignature")?.trim();
 if (sig) {
   output += `\n———————-\n${sig}\n`;
-}document.getElementById("output").textContent = output.trim();
+}
+
+document.getElementById("output").textContent = output.trim();
   document.getElementById("shareButton").style.display = "inline-block";
 }
 
