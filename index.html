@@ -439,7 +439,10 @@ function generateItinerary() {
     output += `\n${sig.trim()}\n`;
   }
 
-  document.getElementById("output").textContent = output.trim();
+  const sig = localStorage.getItem("itinerarySignature")?.trim();
+if (sig) {
+  output += `\n———————-\n${sig}\n`;
+}document.getElementById("output").textContent = output.trim();
   document.getElementById("shareButton").style.display = "inline-block";
 }
 
