@@ -827,9 +827,19 @@ document.addEventListener("DOMContentLoaded", () => {
 document.getElementById("signatureInput").addEventListener("click", () => {
   const input = document.getElementById("signatureInput");
 
+  // Fully remove readonly and re-enable interaction
   input.removeAttribute("readonly");
-  input.focus(); // bring up the keyboard
-  input.setSelectionRange(input.value.length, input.value.length); // move cursor to end
+
+  // Trick to force focus AND cursor on iOS
+  setTimeout(() => {
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length); // cursor at end
+  }, 0);
+
+  // Show editing controls
+  document.getElementById("signatureButtons").style.display = "none";
+  document.getElementById("saveControls").style.display = "flex";
+});
 
   document.getElementById("signatureButtons").style.display = "none";
   document.getElementById("saveControls").style.display = "flex";
