@@ -431,13 +431,17 @@ function generateItinerary() {
       .map(line => "- " + line);
 
     output += `Day ${index + 1} – ${date}\n${activities.join("\n")}\n\n`;
-
-    document.getElementById("shareButton").style.display = "inline-block";
   });
 
-  document.getElementById("output").textContent = output.trim();
-}
+  // ✅ Append signature if available
+  const sig = localStorage.getItem("itinerarySignature");
+  if (sig && sig.trim()) {
+    output += `\n${sig.trim()}\n`;
+  }
 
+  document.getElementById("output").textContent = output.trim();
+  document.getElementById("shareButton").style.display = "inline-block";
+}
 
 //////////////////////////////
 // END FUNCTION: generateItinerary //
