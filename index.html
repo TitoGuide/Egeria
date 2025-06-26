@@ -434,20 +434,14 @@ function generateItinerary() {
   });
 
   // ✅ Append signature if available
-  const sig = localStorage.getItem("itinerarySignature");
-  if (sig && sig.trim()) {
-    output += `\n${sig.trim()}\n`;
+  const sig = localStorage.getItem("itinerarySignature")?.trim();
+  if (sig) {
+    output += `\n———————-\n${sig}\n`;
   }
 
-  const sig = localStorage.getItem("itinerarySignature")?.trim();
-if (sig) {
-  output += `\n———————-\n${sig}\n`;
-}
-
-document.getElementById("output").textContent = output.trim();
+  document.getElementById("output").textContent = output.trim();
   document.getElementById("shareButton").style.display = "inline-block";
 }
-
 //////////////////////////////
 // END FUNCTION: generateItinerary //
 //////////////////////////////
