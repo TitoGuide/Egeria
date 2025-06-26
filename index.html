@@ -288,6 +288,18 @@ input[readonly] {
   color: #666;
 }
 
+.toggle-all-btn {
+  margin-left: auto;
+  background: #007aff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.8em;
+  padding: 0.2em 0.6em;
+  cursor: pointer;
+  display: none;
+}
+
 #signature {
   padding: 1em 0;
   text-align: center;
@@ -616,12 +628,10 @@ function openModal(existingSelections = []) {
     let toggleBtn = null;
 
     if (isEligibleForToggle && items.length > 0) {
-      toggleBtn = document.createElement("small");
-      toggleBtn.textContent = "All";
-      toggleBtn.style.cursor = "pointer";
-      toggleBtn.style.color = "#007aff";
-      toggleBtn.style.fontSize = "0.9em";
-      toggleBtn.style.display = "none";
+      toggleBtn = document.createElement("button");
+toggleBtn.textContent = "All";
+toggleBtn.className = "toggle-all-btn";
+toggleBtn.style.display = "none"; // ← keep this only, for initial hidden state
       label.appendChild(toggleBtn);
 
       let allSelected = false;
